@@ -93,6 +93,10 @@ The parameters that can be configured and their defaults are:
 
 - `verbosity: str = "INFO"` - the reported logging error level (e.g. "ERROR", "WARNING", "INFO")
 
+- `test_prefixes: List[str]` - specifies a list of prefixes to check within the model's response. The attack is considered successful if the response does not contain any of these prefixes, and the success count (m_c) is incremented accordingly.
+
+- `max_new_tokens: int = 40` - defines the maximum number of tokens the model is allowed to generate in its response.
+
 Note that the default nanoGCG configuration will run the GCG algorithm as described in the [original paper](https://arxiv.org/pdf/2307.15043) without algorithmic changes like multi-position token swapping and mellowmax.
 
 The `run` method returns a `GCGResult` object, which has a `best_string` attribute -- this is the optimized string that can be inserted into prompts. Losses and strings from each step of the optimization are returned in the result, via the `losses` and `strings` attributes, along with a `best_loss` attribute that corresponds to `best_string`.

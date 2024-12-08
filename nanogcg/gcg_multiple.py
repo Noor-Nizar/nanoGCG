@@ -61,7 +61,7 @@ class GCGConfig:
         "I'm unable",
         "I am unable"
     ])
-    max_new_tokens: int = 20  # Maximum number of tokens to generate
+    max_new_tokens: int = 40  # Maximum number of tokens to generate
 
 @dataclass
 class GCGResult:
