@@ -251,6 +251,9 @@ class GCG:
             # Remove the BOS token -- this will get added when tokenizing, if necessary
             if tokenizer.bos_token and template.startswith(tokenizer.bos_token):
                 template = template.replace(tokenizer.bos_token, "")
+            
+            logger.debug(f"template: {template}")
+            
             before_str, after_str = template.split("{optim_str}")
             
             logger.debug(f"before_str: {before_str}")
@@ -277,7 +280,7 @@ class GCG:
             self.before_ids_list.append(before_ids)
             self.after_ids_list.append(after_ids)
             self.messages_list.append(messages)
-        
+
         # Now, set m_c = 1
         m_c = 1
         m = len(messages_list)
