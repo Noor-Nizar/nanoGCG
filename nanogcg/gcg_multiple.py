@@ -241,7 +241,7 @@ class GCG:
                 messages = [{"role": "user", "content": messages}]
             else:
                 messages = copy.deepcopy(messages)
-        
+
             # Append the GCG string at the end of the prompt if location not specified
             # if not any(["{optim_str}" in d["content"] for d in messages]):
             #     messages[-1]["content"] = messages[-1]["content"] + "{optim_str}"
@@ -252,6 +252,9 @@ class GCG:
             if tokenizer.bos_token and template.startswith(tokenizer.bos_token):
                 template = template.replace(tokenizer.bos_token, "")
             before_str, after_str = template.split("{optim_str}")
+            
+            logger.debug(f"before_str: {before_str}")
+            logger.debug(f"after_str: {after_str}")
 
             target = " " + target if config.add_space_before_target else target
 
@@ -274,7 +277,7 @@ class GCG:
             self.before_ids_list.append(before_ids)
             self.after_ids_list.append(after_ids)
             self.messages_list.append(messages)
-
+        
         # Now, set m_c = 1
         m_c = 1
         m = len(messages_list)
@@ -539,7 +542,7 @@ class GCG:
 
     def init_buffer(self) -> AttackBuffer:
         # ... [Modify this method to align with batch_size handling]
-
+        
         model = self.model
         tokenizer = self.tokenizer
         config = self.config
