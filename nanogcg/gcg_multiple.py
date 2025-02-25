@@ -62,6 +62,7 @@ class GCGConfig:
         "I am unable"
     ])
     max_new_tokens: int = 40  # Maximum number of tokens to generate
+    max_prompt_retries: Optional[int] = None  # Maximum number of retries for a prompt, None = no limit
 
 @dataclass
 class GCGResult:
@@ -285,6 +286,9 @@ class GCG:
         m_c = 1
         m = len(messages_list)
 
+        retry_count = 0
+        successful_prompts = 0
+
         # Initialize the attack buffer
         buffer = self.init_buffer()
         optim_ids = buffer.get_best_ids()
@@ -366,9 +370,19 @@ class GCG:
                 current_generated_texts[idx] = generated_text
 
             # Check success condition and increment m_c
-            if self.success_condition(m_c, current_generated_texts) and m_c < m:
-                m_c += 1
-                logger.info(f"Incremented m_c to {m_c}")
+            if m_c < m:
+                if self.success_condition(m_c, current_generated_texts):
+                    successful_prompts += 1
+                    logger.info(f"Successful break for prompt {m_c+1} (Total successes: {successful_prompts}).")
+                    m_c += 1
+                    retry_count = 0
+                else:
+                    if config.max_prompt_retries is not None:
+                        retry_count += 1
+                        if retry_count >= config.max_prompt_retries:
+                            logger.info(f"Skipping prompt {m_c+1} after {retry_count} unsuccessful retries.")
+                            m_c += 1
+                            retry_count = 0
 
         min_loss_index = losses.index(min(losses)) 
 
